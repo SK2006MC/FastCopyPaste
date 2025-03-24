@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     namespace "com.sk.fcp"
     defaultConfig {
         applicationId "com.sk.fcp"
-        minSdk 26
+        minSdk 27
         targetSdk 34
         versionCode 1
         versionName "1.0"

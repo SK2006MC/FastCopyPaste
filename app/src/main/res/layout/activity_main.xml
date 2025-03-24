@@ -30,13 +30,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="File Name:"
+                android:text="@string/file_name_colon"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter file name (e.g., my_note.txt)"
+                android:hint="@string/enter_file_name_e_g_my_note_txt"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"> 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="File Content:"
+                android:text="@string/file_content_colon"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -60,6 +60,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <EditText
+                    android:autofillHints="name"
                     android:id="@+id/editTextFileContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +68,7 @@
                     android:gravity="top|start"
                     android:inputType="textMultiLine"
                     android:minLines="5"
-                    android:hint="Enter file content"
+                    android:hint="@string/enter_file_content"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,8 +94,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon" 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_add_24"
-                    android:text="New"
+                    android:icon="@drawable/baseline_add_24"
+                    android:text="@string/new_str"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -103,8 +104,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_folder_open_24"
-                    android:text="Open"
+                    android:icon="@drawable/baseline_folder_open_24"
+                    android:text="@string/open_str"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -113,8 +114,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_save_24"
-                    android:text="Save"
+                    android:icon="@drawable/baseline_save_24"
+                    android:text="@string/save_str"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -123,8 +124,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_save_as_24"
-                    android:text="Save As"
+                    android:icon="@drawable/baseline_save_as_24"
+                    android:text="@string/save_as"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -133,8 +134,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_content_copy_24" 
-                    android:text="Copy"
+                    android:icon="@drawable/baseline_content_copy_24"
+                    android:text="@string/copy_str"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -143,8 +144,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon" 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_paste_24"
-                    android:text="Paste"
+                    android:icon="@drawable/baseline_content_paste_24"
+                    android:text="@string/paste_str"
                     android:layout_marginEnd="8dp"
                     app:iconGravity="textStart" />
 
@@ -153,8 +154,8 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_baseline_clear_all_24"
-                    android:text="Clear"
+                    android:icon="@drawable/baseline_clear_all_24"
+                    android:text="@string/clear_str"
                     app:iconGravity="textStart" />
             </LinearLayout>
 
