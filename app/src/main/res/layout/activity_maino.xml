@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".MainActivity">
+
+	<androidx.cardview.widget.CardView
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="32dp"
+		android:layout_marginTop="32dp"
+		android:layout_marginEnd="32dp"
+		android:layout_marginBottom="32dp"
+		app:cardCornerRadius="8dp"
+		app:cardElevation="4dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
+
+		<LinearLayout
+			android:id="@+id/linearLayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/file_name_colon"
+				android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/enter_file_name_e_g_my_note_txt">
+
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/editTextFileName"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="textNoSuggestions"
+					android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:text="@string/file_content_colon"
+				android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+				<EditText
+					android:id="@+id/editTextFileContent"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:autofillHints="none"
+					android:ems="10"
+					android:gravity="top|start"
+					android:hint="@string/enter_file_content"
+					android:inputType="textMultiLine"
+					android:minLines="5"
+					android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<TextView
+				android:id="@+id/textViewWordCount"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:gravity="end"
+				android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+				tools:text="Words: 0, Chars: 0" />
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:gravity="center"
+				android:orientation="horizontal">
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonNew"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_add_24"
+					android:text="@string/new_str"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonOpen"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_folder_open_24"
+					android:text="@string/open_str"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonSave"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_save_24"
+					android:text="@string/save_str"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonSaveAs"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_save_as_24"
+					android:text="@string/save_as"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonCopy"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_content_copy_24"
+					android:text="@string/copy_str"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonPaste"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:icon="@drawable/baseline_content_paste_24"
+					android:text="@string/paste_str"
+					app:iconGravity="textStart" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/buttonClear"
+					style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:icon="@drawable/baseline_clear_all_24"
+					android:text="@string/clear_str"
+					app:iconGravity="textStart" />
+			</LinearLayout>
+
+			<Button
+				android:id="@+id/buttonToggleFloat"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="24dp"
+				android:text="@string/start_floating" />
+
+		</LinearLayout>
+	</androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
