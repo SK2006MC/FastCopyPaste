@@ -11,14 +11,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class FloatingTextService extends Service {
 
     private WindowManager mWindowManager;
     private View mFloatingView;
-    private LinearLayout mFloatingLinearLayout;
-    private EditText editTextFileContent, editTextFileName;
     private int initialX;
     private int initialY;
     private float initialTouchX;
@@ -39,9 +38,9 @@ public class FloatingTextService extends Service {
         super.onCreate();
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.activity_main, null);
-        mFloatingLinearLayout = mFloatingView.findViewById(R.id.linearLayout);
-        editTextFileContent = mFloatingView.findViewById(R.id.editTextFileContent);
-        editTextFileName = mFloatingView.findViewById(R.id.editTextFileName);
+        LinearLayout mFloatingLinearLayout = mFloatingView.findViewById(R.id.linearLayout);
+        EditText editTextFileContent = mFloatingView.findViewById(R.id.editTextFileContent);
+        EditText editTextFileName = mFloatingView.findViewById(R.id.editTextFileName);
 
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -56,51 +55,25 @@ public class FloatingTextService extends Service {
         }
 
         //Implement drag based on touch listener
-        mFloatingLinearLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialX = params.x;
-                        initialY = params.y;
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
-                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
-                        mWindowManager.updateViewLayout(mFloatingView, params);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        return true;
-                }
-                return false;
+        mFloatingLinearLayout.setOnTouchListener(this::onTouch);
+
+        editTextFileContent.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                params.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                mWindowManager.updateViewLayout(mFloatingView, params);
+            } else {
+                params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                mWindowManager.updateViewLayout(mFloatingView, params);
             }
         });
 
-        editTextFileContent.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    params.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                    mWindowManager.updateViewLayout(mFloatingView, params);
-                } else {
-                    params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                    mWindowManager.updateViewLayout(mFloatingView, params);
-                }
-            }
-        });
-
-        editTextFileName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    params.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                    mWindowManager.updateViewLayout(mFloatingView, params);
-                } else {
-                    params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                    mWindowManager.updateViewLayout(mFloatingView, params);
-                }
+        editTextFileName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                params.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                mWindowManager.updateViewLayout(mFloatingView, params);
+            } else {
+                params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                mWindowManager.updateViewLayout(mFloatingView, params);
             }
         });
     }
@@ -111,5 +84,24 @@ public class FloatingTextService extends Service {
         if (mFloatingView != null && mWindowManager != null) {
             mWindowManager.removeView(mFloatingView);
         }
+    }
+
+    private boolean onTouch(View view, @NonNull MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                initialX = params.x;
+                initialY = params.y;
+                initialTouchX = event.getRawX();
+                initialTouchY = event.getRawY();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                params.x = initialX + (int) (event.getRawX() - initialTouchX);
+                params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                mWindowManager.updateViewLayout(mFloatingView, params);
+                return true;
+            case MotionEvent.ACTION_UP:
+                return true;
+        }
+        return false;
     }
 }

@@ -1,15 +1,10 @@
 package com.sk.fcp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -21,6 +16,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,50 +30,45 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText editTextFileName;
     private EditText editTextFileContent;
-    private Button buttonSave;
-    private Button buttonSaveAs;
-    private Button buttonClear;
-    private Button buttonOpen;
-    private Button buttonNew;
-    private Button buttonCopy;
-    private Button buttonPaste;
     private TextView textViewWordCount;
     private Button buttonToggleFloat;
 
     private static final Pattern INVALID_FILENAME_CHARS = Pattern.compile("[\\\\/:*?\"<>|]");
     private static final int SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST = 1234;
     private boolean isServiceRunning = false; // Track service status
+    ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main.xml);
+        setContentView(R.layout.activity_main);
 
         editTextFileName = findViewById(R.id.editTextFileName);
         editTextFileContent = findViewById(R.id.editTextFileContent);
-        buttonSave = findViewById(R.id.buttonSave);
-        buttonSaveAs = findViewById(R.id.buttonSaveAs);
-        buttonClear = findViewById(R.id.buttonClear);
-        buttonOpen = findViewById(R.id.buttonOpen);
-        buttonNew = findViewById(R.id.buttonNew);
-        buttonCopy = findViewById(R.id.buttonCopy);
-        buttonPaste = findViewById(R.id.buttonPaste);
+        Button buttonSave = findViewById(R.id.buttonSave);
+        Button buttonSaveAs = findViewById(R.id.buttonSaveAs);
+        Button buttonClear = findViewById(R.id.buttonClear);
+        Button buttonOpen = findViewById(R.id.buttonOpen);
+        Button buttonNew = findViewById(R.id.buttonNew);
+        Button buttonCopy = findViewById(R.id.buttonCopy);
+        Button buttonPaste = findViewById(R.id.buttonPaste);
         textViewWordCount = findViewById(R.id.textViewWordCount);
         buttonToggleFloat = findViewById(R.id.buttonToggleFloat);
 
-        buttonSave.setOnClickListener(v -> saveFile(v));
-        buttonSaveAs.setOnClickListener(v -> saveFileAs(v));
+        buttonSave.setOnClickListener(this::saveFile);
+        buttonSaveAs.setOnClickListener(this::saveFileAs);
         buttonClear.setOnClickListener(v -> clearFields());
-        buttonOpen.setOnClickListener(v -> showFileDialog(v));
+        buttonOpen.setOnClickListener(this::showFileDialog);
         buttonNew.setOnClickListener(v -> newFile());
-        buttonCopy.setOnClickListener(v -> copyToClipboard(v));
-        buttonPaste.setOnClickListener(v -> pasteFromClipboard(v));
+        buttonCopy.setOnClickListener(this::copyToClipboard);
+        buttonPaste.setOnClickListener(this::pasteFromClipboard);
         buttonToggleFloat.setOnClickListener(v -> toggleFloatingService());
 
         editTextFileContent.requestFocus();
@@ -89,12 +86,17 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
         updateWordCount();
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            //pass
+        });
     }
 
     private void toggleFloatingService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+        if (!Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST);
+            activityResultLauncher.launch(intent);
+//            startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST);
         } else {
             toggleService();
         }
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+            if (Settings.canDrawOverlays(this)) {
                 toggleService();
             } else {
                 Toast.makeText(this, "Overlay permission denied.", Toast.LENGTH_SHORT).show();
@@ -116,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(this, FloatingTextService.class);
         if (!isServiceRunning) {
             startService(serviceIntent);
-            buttonToggleFloat.setText("Stop Floating");
+            buttonToggleFloat.setText(R.string.stop_floating);
         } else {
             stopService(serviceIntent);
-            buttonToggleFloat.setText("Start Floating");
+            buttonToggleFloat.setText(R.string.start_floating);
         }
         isServiceRunning = !isServiceRunning; // Toggle service state
     }
@@ -158,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("SaveFileError", "Error saving file: " + e.getMessage());
             Snackbar.make(view, "Error saving file: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
-            e.printStackTrace();
         }
     }
 
@@ -190,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("SaveFileAsError", "Error saving file as: " + e.getMessage());
             Snackbar.make(view, "Error saving file as: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
-            e.printStackTrace();
         }
     }
 
@@ -258,13 +258,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("OpenFileError", "Error opening file: " + e.getMessage());
             Snackbar.make(view, "Error opening file: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
-            e.printStackTrace();
         }
     }
 
     private void newFile() {
         clearFields();
-        editTextFileName.setText("new_file.txt");
+        editTextFileName.setText(R.string.new_file_txt);
         editTextFileContent.requestFocus();
     }
 
@@ -308,6 +307,6 @@ public class MainActivity extends AppCompatActivity {
             wordCount = words.length;
         }
 
-        textViewWordCount.setText("Words: " + wordCount + ", Chars: " + charCount);
+        textViewWordCount.setText(String.format(Locale.ENGLISH, "Words: %d, Chars: %d", wordCount, charCount));
     }
 }
