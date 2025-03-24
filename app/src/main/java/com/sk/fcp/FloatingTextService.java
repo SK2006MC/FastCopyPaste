@@ -17,9 +17,7 @@ public class FloatingTextService extends Service {
 
     private WindowManager mWindowManager;
     private View mFloatingView;
-    private LinearLayout mFloatingLinearLayout;
-    private EditText editTextFileContent, editTextFileName;
-    private int initialX;
+	private int initialX;
     private int initialY;
     private float initialTouchX;
     private float initialTouchY;
@@ -40,9 +38,9 @@ public class FloatingTextService extends Service {
         super.onCreate();
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.activity_main,null);
-        mFloatingLinearLayout = mFloatingView.findViewById(R.id.linearLayout1);
-        editTextFileContent = mFloatingView.findViewById(R.id.editTextFileContent);
-        editTextFileName = mFloatingView.findViewById(R.id.editTextFileName);
+	    LinearLayout mFloatingLinearLayout = mFloatingView.findViewById(R.id.linearLayout1);
+	    EditText editTextFileContent = mFloatingView.findViewById(R.id.editTextFileContent);
+	    EditText editTextFileName = mFloatingView.findViewById(R.id.editTextFileName);
 
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,

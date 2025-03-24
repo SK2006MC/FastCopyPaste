@@ -3,8 +3,7 @@ package com.sk.fcp;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
-import com.sk.R;
-import com.sk.databinding.ActivityMainBinding;
+import com.sk.fcp.databinding.ActivityMainBinding;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -36,13 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
 	private EditText editTextFileName;
 	private EditText editTextFileContent;
-	private Button buttonSave;
-	private Button buttonSaveAs;
-	private Button buttonClear;
-	private Button buttonOpen;
-	private Button buttonNew;
-	private Button buttonCopy;
-	private Button buttonPaste;
 	private TextView textViewWordCount;
 	private Button buttonToggleFloat;
 
@@ -59,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
 		editTextFileName = binding.editTextFileName;
 		editTextFileContent = binding.editTextFileContent;
-		buttonSave = binding.buttonSave;
-		buttonSaveAs = binding.buttonSaveAs;
-		buttonClear = binding.buttonClear;
-		buttonOpen = binding.buttonOpen;
-		buttonNew = binding.buttonNew;
-		buttonCopy = binding.buttonCopy;
-		buttonPaste = binding.buttonPaste;
+		Button buttonSave = binding.buttonSave;
+		Button buttonSaveAs = binding.buttonSaveAs;
+		Button buttonClear = binding.buttonClear;
+		Button buttonOpen = binding.buttonOpen;
+		Button buttonNew = binding.buttonNew;
+		Button buttonCopy = binding.buttonCopy;
+		Button buttonPaste = binding.buttonPaste;
 		textViewWordCount = binding.textViewWordCount;
 //		buttonToggleFloat = binding
 
