@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.sk.fcp.databinding.ActivityMainBinding;
 import com.sk.fcp.databinding.FloatingWindowLayoutBinding;
 
 import java.io.BufferedReader;
@@ -37,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
 	private static final int SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST = 1234;
 	ActivityResultLauncher<Intent> activityResultLauncher;
 	private FloatingWindowLayoutBinding binding;
-	private boolean isServiceRunning = false; // Track service status
+	ActivityMainBinding mainBinding;
+	private boolean isServiceRunning = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
 		binding = FloatingWindowLayoutBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 

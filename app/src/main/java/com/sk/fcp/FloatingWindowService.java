@@ -56,7 +56,7 @@ public class FloatingWindowService extends Service {
         // Make the window draggable
         setupDragAndDrop();
         //set the functions of the buttons
-        setupButtons();
+//        setupButtons();
 
         // Set initial text
         setInitialText();
