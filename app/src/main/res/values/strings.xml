@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">FastCopyPaste</string>
-    <string name="new_file_txt">new_file.txt</string>
-    <string name="stop_floating">Stop Floating</string>
-    <string name="start_floating">Start Floating</string>
-    <string name="file_name_colon">File Name:</string>
-    <string name="enter_file_name_e_g_my_note_txt">Enter file name (e.g., my_note.txt)</string>
-    <string name="file_content_colon">File Content:</string>
-    <string name="enter_file_content">Enter file content</string>
-    <string name="new_str">New</string>
-    <string name="open_str">Open</string>
-    <string name="save_str">Save</string>
-    <string name="save_as">Save As</string>
-    <string name="copy_str">Copy</string>
-    <string name="paste_str">Paste</string>
-    <string name="clear_str">Clear</string>
+	<string name="app_name">FastCopyPaste</string>
+	<string name="new_file_txt">new_file.txt</string>
+	<string name="stop_floating">Stop Floating</string>
+	<string name="start_floating">Start Floating</string>
+	<string name="file_name_colon">File Name:</string>
+	<string name="enter_file_name_e_g_my_note_txt">Enter file name (e.g., my_note.txt)</string>
+	<string name="file_content_colon">File Content:</string>
+	<string name="enter_file_content">Enter file content</string>
+	<string name="new_str">New</string>
+	<string name="open_str">Open</string>
+	<string name="save_str">Save</string>
+	<string name="save_as">Save As</string>
+	<string name="copy_str">Copy</string>
+	<string name="paste_str">Paste</string>
+	<string name="clear_str">Clear</string>
 </resources>
