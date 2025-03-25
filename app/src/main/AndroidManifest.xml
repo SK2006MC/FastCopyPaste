@@ -21,13 +21,6 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".MainActivity3" />
-
-		<service
-			android:name=".FloatingTextService"
-			android:enabled="true"
-			android:exported="false" />
-
 		<service android:name=".FloatingWindowService" />
 
 	</application>

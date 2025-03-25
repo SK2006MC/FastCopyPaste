@@ -1,24 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/floating_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@android:color/holo_blue_light"
-    android:orientation="vertical">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:background="@android:color/holo_blue_light"
+	android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/floating_window_title"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
+	<LinearLayout
+		android:id="@+id/linearLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="16dp">
 
-    <Button
-        android:id="@+id/close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/close_button_text" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/file_name_colon"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
+		<EditText
+			android:id="@+id/editTextFileName"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textNoSuggestions"
+			android:minHeight="48dp"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="16dp"
+			android:text="@string/file_content_colon"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+
+		<EditText
+			android:id="@+id/editTextFileContent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:autofillHints="none"
+			android:ems="10"
+			android:gravity="top|start"
+			android:hint="@string/enter_file_content"
+			android:inputType="textMultiLine"
+			android:minLines="5"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+		<TextView
+			android:id="@+id/textViewWordCount"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:gravity="end"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+			tools:text="Words: 0, Chars: 0" />
+
+		<HorizontalScrollView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:gravity="center"
+				android:orientation="horizontal">
+
+				<ImageButton
+					android:id="@+id/buttonNew"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_add_24" />
+
+				<ImageButton
+					android:id="@+id/buttonOpen"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_folder_open_24"
+					android:text="@string/open_str"
+					app:iconGravity="textStart" />
+
+				<ImageButton
+					android:id="@+id/buttonSave"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_save_24"
+					android:text="@string/save_str"
+					app:iconGravity="textStart" />
+
+				<ImageButton
+					android:id="@+id/buttonSaveAs"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_save_as_24"
+					android:text="@string/save_as"
+					app:iconGravity="textStart" />
+
+				<ImageButton
+					android:id="@+id/buttonCopy"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_content_copy_24"
+					android:text="@string/copy_str"
+					app:iconGravity="textStart" />
+
+				<ImageButton
+					android:id="@+id/buttonPaste"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:src="@drawable/baseline_content_paste_24"
+					android:text="@string/paste_str"
+					app:iconGravity="textStart" />
+
+				<ImageButton
+					android:id="@+id/buttonClear"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:contentDescription="TODO"
+					android:src="@drawable/baseline_clear_all_24"
+					android:text="@string/clear_str"
+					app:iconGravity="textStart" />
+			</LinearLayout>
+		</HorizontalScrollView>
+
+		<Button
+			android:id="@+id/buttonToggleFloat"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="24dp"
+			android:text="@string/start_floating" />
+
+	</LinearLayout>
 </LinearLayout>
