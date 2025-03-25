@@ -1,4 +1,4 @@
-package com.sk.fcp.utils;
+package com.sk.fcp;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

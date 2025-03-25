@@ -14,8 +14,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sk.fcp.databinding.FloatingWindowLayoutBinding;
-import com.sk.fcp.utils.ClipboardManagerHelper;
-import com.sk.fcp.utils.FileManager;
 
 import java.io.IOException;
 

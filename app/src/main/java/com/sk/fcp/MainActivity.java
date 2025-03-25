@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 			return;
 		}
 
-		File directory = getFilesDir();
+		File directory = getExternalFilesDir(null);
 		File file = new File(directory, fileName);
 
 		try (FileWriter writer = new FileWriter(file)) {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 			return;
 		}
 
-		File directory = getFilesDir();
+		File directory = getExternalFilesDir(null);
 		File file = new File(directory, fileName);
 
 		try (FileWriter writer = new FileWriter(file)) {
@@ -182,7 +182,8 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void showFileDialog(View view) {
-		File directory = getFilesDir();
+		File directory = getExternalFilesDir(null);
+		assert directory != null;
 		File[] files = directory.listFiles();
 		if (files == null || files.length == 0) {
 			Snackbar.make(view, "No files saved yet.", Snackbar.LENGTH_SHORT).show();
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
 			return;
 		}
 
-		File directory = getFilesDir();
+		File directory = getExternalFilesDir(null);
 		File file = new File(directory, fileName);
 
 		if (!file.exists()) {
@@ -250,15 +251,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void copyToClipboard(View view) {
-		String textToCopy = binding.editTextFileContent.getText().toString();
-		if (!textToCopy.isEmpty()) {
-			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-			ClipData clip = ClipData.newPlainText("fileContent", textToCopy);
-			clipboard.setPrimaryClip(clip);
-			Snackbar.make(view, "Content copied to clipboard", Snackbar.LENGTH_SHORT).show();
-		} else {
-			Snackbar.make(view, "Nothing to copy (File content is empty)", Snackbar.LENGTH_SHORT).show();
-		}
+		ClipboardManagerHelper.copyToClipboard(binding.editTextFileContent.getText().toString(), this);
 	}
 
 	private void pasteFromClipboard(View view) {
