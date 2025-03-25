@@ -3,7 +3,6 @@ package com.sk.fcp;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,6 +11,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.sk.fcp.databinding.ActivityMainoBinding;
+import com.sk.fcp.databinding.FloatingWindowLayoutBinding;
 
 public class FloatingWindowService extends Service {
 
@@ -26,33 +28,28 @@ public class FloatingWindowService extends Service {
         return null;
     }
 
+    FloatingWindowLayoutBinding binding;
+    ActivityMainoBinding binding2;
     @Override
     public void onCreate() {
         super.onCreate();
-
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        binding = FloatingWindowLayoutBinding.inflate(layoutInflater);
+        binding2 = ActivityMainoBinding.inflate(layoutInflater);
         // Inflate the floating window layout
-        mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating_window_layout, null);
+        mFloatingView = binding2.getRoot();
 
         // Set layout parameters
         final WindowManager.LayoutParams params;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-        } else {
-            params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-        }
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
 
         // Specify the position of the floating window
-        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.gravity = Gravity.TOP | Gravity.START;
         params.x = 0;
         params.y = 100; // Initial Y position
 
@@ -61,15 +58,14 @@ public class FloatingWindowService extends Service {
         mWindowManager.addView(mFloatingView, params);
 
         // Handle touch events to make the window draggable
-        final View titleBar = mFloatingView.findViewById(R.id.floating_view);
+        final View titleBar = binding2.getRoot();
         titleBar.setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float touchX;
-            private float touchY;
+            private int initialX, initialY;
+            private float touchX, touchY;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                v.performClick();
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialX = params.x;
@@ -90,16 +86,11 @@ public class FloatingWindowService extends Service {
         });
 
         // Handle close button click
-        Button closeButton = mFloatingView.findViewById(R.id.close_button);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopSelf();
-            }
-        });
+        Button closeButton = binding2.buttonToggleFloat;
+        closeButton.setOnClickListener(v -> stopSelf());
 
         // You can add more functionality here, like updating the TextView
-        TextView textView = mFloatingView.findViewById(R.id.text_view);
+        TextView textView = binding2.editTextFileName;
         textView.setText(R.string.floating_window_running_text);
     }
 

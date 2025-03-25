@@ -37,7 +37,7 @@ public class FloatingTextService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
-		mFloatingView = LayoutInflater.from(this).inflate(R.layout.activity_main, null);
+		mFloatingView = LayoutInflater.from(this).inflate(R.layout.activity_maino, null);
 		LinearLayout mFloatingLinearLayout = mFloatingView.findViewById(R.id.linearLayout);
 		EditText editTextFileContent = mFloatingView.findViewById(R.id.editTextFileContent);
 		EditText editTextFileName = mFloatingView.findViewById(R.id.editTextFileName);

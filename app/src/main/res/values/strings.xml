@@ -14,7 +14,6 @@
 	<string name="copy_str">Copy</string>
 	<string name="paste_str">Paste</string>
 	<string name="clear_str">Clear</string>
-    <string name="app_name">YourAppName</string>
     <string name="floating_window_title">Floating Window</string>
     <string name="close_button_text">Close</string>
     <string name="floating_window_running_text">Floating Window is Running!</string>
