@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.sk.fcp.databinding.ActivityMainBinding;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 		binding.buttonCopy.setOnClickListener(this::copyToClipboard);
 		binding.buttonPaste.setOnClickListener(this::pasteFromClipboard);
 		binding.buttonToggleFloat.setOnClickListener(v -> toggleFloatingService());
+		mainBinding.preferencesButton.setOnClickListener(v -> launchPreferences());
 	}
 
 	/**
@@ -130,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		);
+	}
+
+	/**
+	 * Launches the preferences activity
+	 */
+	private void launchPreferences() {
+		Intent intent = new Intent(this, PreferencesActivity.class);
+		startActivity(intent);
 	}
 
 	/**
@@ -308,17 +318,16 @@ public class MainActivity extends AppCompatActivity {
 	 * Toggles the floating window service.
 	 */
 	private void toggleFloatingService() {
-		if (!floatingWindowManager.isServiceRunning()) {
-			if (floatingWindowManager.hasOverlayPermission()) {
+		if (!isServiceRunning) {
+			if (Settings.canDrawOverlays(this)) {
 				startFloatingService();
-				binding.buttonToggleFloat.setText(R.string.stop_floating);
-				Snackbar.make(binding.getRoot(), R.string.start_floating_window, Snackbar.LENGTH_SHORT).show();
 			} else {
-				floatingWindowManager.requestOverlayPermission();
+				Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+					Uri.parse("package:" + getPackageName()));
+				activityResultLauncher.launch(intent);
 			}
 		} else {
-			floatingWindowManager.stopFloatingService();
-			binding.buttonToggleFloat.setText(R.string.start_floating);
+			stopFloatingService();
 		}
 	}
 

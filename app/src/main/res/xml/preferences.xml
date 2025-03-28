@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Storage Settings">
+        <Preference
+            android:key="root_path"
+            android:title="Storage Location"
+            android:summary="Select where files will be saved"
+            android:icon="@android:drawable/ic_menu_save" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="General Settings">
+        <SwitchPreferenceCompat
+            android:key="auto_start"
+            android:title="Auto-start floating window"
+            android:summary="Start floating window when app launches"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="stay_on_top"
+            android:title="Keep floating window on top"
+            android:summary="Keep floating window above other apps"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Appearance">
+        <SeekBarPreference
+            android:key="window_opacity"
+            android:title="Window opacity"
+            android:summary="Adjust the transparency of the floating window"
+            android:max="100"
+            android:defaultValue="100" />
+    </PreferenceCategory>
+
+</PreferenceScreen> 
