@@ -14,11 +14,17 @@ import java.util.regex.Pattern;
 public class FileOperationsImpl implements FileOperations {
     private static final Pattern INVALID_FILENAME_CHARS = Pattern.compile("[\\\\/:*?\"<>|]");
     private final Context context;
-    private final String filesDir;
 
     public FileOperationsImpl(Context context) {
         this.context = context;
-        this.filesDir = context.getFilesDir().getAbsolutePath();
+    }
+
+    private File getFilesDirectory() {
+        File filesDir = context.getFilesDir();
+        if (filesDir == null) {
+            throw new IllegalStateException("Files directory is not available");
+        }
+        return filesDir;
     }
 
     @Override
@@ -26,7 +32,7 @@ public class FileOperationsImpl implements FileOperations {
         if (!validateFileOperation(fileName, content)) {
             throw new IllegalArgumentException("Invalid file operation");
         }
-        File file = new File(filesDir, fileName);
+        File file = new File(getFilesDirectory(), fileName);
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(content);
         }
@@ -39,7 +45,7 @@ public class FileOperationsImpl implements FileOperations {
 
     @Override
     public String openFile(String fileName) throws IOException {
-        File file = new File(filesDir, fileName);
+        File file = new File(getFilesDirectory(), fileName);
         StringBuilder content = new StringBuilder();
         try (FileReader reader = new FileReader(file)) {
             char[] buffer = new char[1024];
@@ -53,7 +59,7 @@ public class FileOperationsImpl implements FileOperations {
 
     @Override
     public String[] getListOfFiles() {
-        File directory = new File(filesDir);
+        File directory = getFilesDirectory();
         File[] files = directory.listFiles();
         List<String> fileNames = new ArrayList<>();
         if (files != null) {
