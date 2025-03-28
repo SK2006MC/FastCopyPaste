@@ -1,181 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_margin="8dp"
-	app:cardCornerRadius="12dp"
-	app:cardElevation="8dp">
+	android:background="@drawable/floating_window_background"
+	android:orientation="vertical">
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/primary"
+		android:padding="12dp"
+		android:text="@string/floating_window_title"
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:textStyle="bold" />
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@android:color/white"
 		android:orientation="vertical"
 		android:padding="16dp">
 
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="@android:color/holo_blue_light"
-			android:padding="8dp"
-			android:text="@string/floating_window_title"
-			android:textColor="@android:color/white"
-			android:textSize="16sp"
-			android:textStyle="bold" />
+			android:text="@string/file_name_colon"
+			android:textColor="@color/text_primary"
+			android:textSize="14sp" />
 
-		<LinearLayout
+		<EditText
+			android:id="@+id/editTextFileName"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="4dp"
+			android:background="@drawable/edit_text_background"
+			android:hint="@string/enter_file_name_e_g_my_note_txt"
+			android:inputType="textNoSuggestions"
+			android:minHeight="48dp"
+			android:padding="12dp"
+			android:textColor="@color/text_primary"
+			android:textSize="14sp" />
+
+		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="16dp"
-			android:orientation="vertical">
+			android:text="@string/file_content_colon"
+			android:textColor="@color/text_primary"
+			android:textSize="14sp" />
 
-			<TextView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/file_name_colon"
-				android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+		<EditText
+			android:id="@+id/editTextFileContent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="4dp"
+			android:autofillHints="none"
+			android:background="@drawable/edit_text_background"
+			android:ems="10"
+			android:gravity="top|start"
+			android:hint="@string/enter_file_content"
+			android:inputType="textMultiLine"
+			android:minLines="5"
+			android:padding="12dp"
+			android:textColor="@color/text_primary"
+			android:textSize="14sp" />
 
-			<com.google.android.material.textfield.TextInputLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="4dp"
-				android:hint="@string/enter_file_name_e_g_my_note_txt"
-				style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+		<TextView
+			android:id="@+id/textViewWordCount"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:gravity="end"
+			android:textColor="@color/text_secondary"
+			android:textSize="12sp"
+			tools:text="Words: 0, Chars: 0" />
 
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/editTextFileName"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:inputType="textNoSuggestions"
-					android:minHeight="48dp" />
-			</com.google.android.material.textfield.TextInputLayout>
+		<HorizontalScrollView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="16dp">
 
-			<TextView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="16dp"
-				android:text="@string/file_content_colon"
-				android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-
-			<com.google.android.material.textfield.TextInputLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="4dp"
-				android:hint="@string/enter_file_content"
-				style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/editTextFileContent"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:autofillHints="none"
-					android:ems="10"
-					android:gravity="top|start"
-					android:inputType="textMultiLine"
-					android:minLines="5" />
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<TextView
-				android:id="@+id/textViewWordCount"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="8dp"
-				android:gravity="end"
-				android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-				tools:text="Words: 0, Chars: 0" />
-
-			<HorizontalScrollView
+			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="16dp">
+				android:orientation="horizontal">
 
-				<LinearLayout
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal">
+				<ImageButton
+					android:id="@+id/buttonNew"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_add_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonNew"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_add_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonOpen"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_folder_open_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonOpen"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_folder_open_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonSave"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_save_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonSave"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_save_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonSaveAs"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_save_as_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonSaveAs"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_save_as_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonCopy"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_content_copy_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonCopy"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_content_copy_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonPaste"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:layout_marginEnd="8dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_content_paste_24"
+					android:tint="@android:color/white" />
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonPaste"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginEnd="8dp"
-						app:icon="@drawable/baseline_content_paste_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
+				<ImageButton
+					android:id="@+id/buttonClear"
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:background="@drawable/circular_button_background"
+					android:padding="12dp"
+					android:src="@drawable/baseline_clear_all_24"
+					android:tint="@android:color/white" />
+			</LinearLayout>
+		</HorizontalScrollView>
 
-					<com.google.android.material.button.MaterialButton
-						android:id="@+id/buttonClear"
-						style="@style/Widget.MaterialComponents.Button.IconButton"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						app:icon="@drawable/baseline_clear_all_24"
-						app:iconGravity="textStart"
-						app:iconTint="@android:color/white" />
-				</LinearLayout>
-			</HorizontalScrollView>
+		<Button
+			android:id="@+id/buttonToggleFloat"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginTop="24dp"
+			android:background="@drawable/button_background"
+			android:paddingHorizontal="24dp"
+			android:text="@string/start_floating"
+			android:textColor="@android:color/white" />
 
-			<com.google.android.material.button.MaterialButton
-				android:id="@+id/buttonToggleFloat"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_marginTop="24dp"
-				android:text="@string/start_floating"
-				style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
-		</LinearLayout>
 	</LinearLayout>
-</androidx.cardview.widget.CardView>
+</LinearLayout>
