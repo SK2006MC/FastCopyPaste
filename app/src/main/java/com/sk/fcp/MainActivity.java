@@ -32,8 +32,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+/**
+ * Main activity for the FastCopyPaste application.
+ * Provides the main interface for file operations and floating window management.
+ */
 public class MainActivity extends AppCompatActivity {
-
+	private static final String TAG = "MainActivity";
 	private static final Pattern INVALID_FILENAME_CHARS = Pattern.compile("[\\\\/:*?\"<>|]");
 	private static final int SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST = 1234;
 	ActivityResultLauncher<Intent> activityResultLauncher;
@@ -44,10 +48,27 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initializeViews();
+		setupClickListeners();
+		setupTextWatcher();
+		setupActivityResultLauncher();
+		updateWordCount();
+	}
+
+	/**
+	 * Initializes the views using ViewBinding.
+	 */
+	private void initializeViews() {
 		mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
 		binding = FloatingWindowLayoutBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
+		binding.editTextFileContent.requestFocus();
+	}
 
+	/**
+	 * Sets up click listeners for all buttons.
+	 */
+	private void setupClickListeners() {
 		binding.buttonSave.setOnClickListener(this::saveFile);
 		binding.buttonSaveAs.setOnClickListener(this::saveFileAs);
 		binding.buttonClear.setOnClickListener(v -> clearFields());
@@ -56,12 +77,16 @@ public class MainActivity extends AppCompatActivity {
 		binding.buttonCopy.setOnClickListener(this::copyToClipboard);
 		binding.buttonPaste.setOnClickListener(this::pasteFromClipboard);
 		binding.buttonToggleFloat.setOnClickListener(v -> toggleFloatingService());
+	}
 
-		binding.editTextFileContent.requestFocus();
-
+	/**
+	 * Sets up text change listener for word count updates.
+	 */
+	private void setupTextWatcher() {
 		binding.editTextFileContent.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				// Not used
 			}
 
 			@Override
@@ -71,135 +96,101 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void afterTextChanged(Editable s) {
+				// Not used
 			}
 		});
-		updateWordCount();
-
-		activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
-			//pass
-		});
 	}
 
-	private void toggleFloatingService() {
-		if (!Settings.canDrawOverlays(this)) {
-			Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-			activityResultLauncher.launch(intent);
-		} else {
-			toggleService();
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST) {
-			if (Settings.canDrawOverlays(this)) {
-				toggleService();
-			} else {
-				Toast.makeText(this, "Overlay permission denied.", Toast.LENGTH_SHORT).show();
+	/**
+	 * Sets up the activity result launcher for permission requests.
+	 */
+	private void setupActivityResultLauncher() {
+		activityResultLauncher = registerForActivityResult(
+			new ActivityResultContracts.StartActivityForResult(),
+			result -> {
+				if (Settings.canDrawOverlays(this)) {
+					startFloatingService();
+				} else {
+					Snackbar.make(binding.getRoot(), R.string.overlay_permission_denied, Snackbar.LENGTH_SHORT).show();
+				}
 			}
-		}
+		);
 	}
 
-	private void toggleService() {
-		Intent serviceIntent = new Intent(this, FloatingWindowService.class);
-		if (!isServiceRunning) {
-			startService(serviceIntent);
-			binding.buttonToggleFloat.setText(R.string.stop_floating);
-		} else {
-			stopService(serviceIntent);
-			binding.buttonToggleFloat.setText(R.string.start_floating);
-		}
-		isServiceRunning = !isServiceRunning; // Toggle service state
-	}
-
-	private boolean isFloatingServiceRunning() {
-		return isServiceRunning;
-	}
-
+	/**
+	 * Saves the current file.
+	 */
 	private void saveFile(View view) {
 		String fileName = binding.editTextFileName.getText().toString().trim();
 		String fileContent = binding.editTextFileContent.getText().toString();
 
-		if (fileName.isEmpty()) {
-			Snackbar.make(view, "Please enter a file name", Snackbar.LENGTH_SHORT).show();
+		if (!validateFileOperation(fileName, fileContent, view)) {
 			return;
 		}
 
-		if (INVALID_FILENAME_CHARS.matcher(fileName).find()) {
-			Snackbar.make(view, "Invalid filename characters.", Snackbar.LENGTH_LONG).show();
-			return;
-		}
-
-		if (fileContent.isEmpty()) {
-			Snackbar.make(view, "File content is empty, nothing to save.", Snackbar.LENGTH_SHORT).show();
-			return;
-		}
-
-		File directory = getExternalFilesDir(null);
-		File file = new File(directory, fileName);
-
-		try (FileWriter writer = new FileWriter(file)) {
-			writer.write(fileContent);
+		try {
+			FileManager.saveFile(fileName, fileContent, this);
 			Snackbar.make(view, "File saved as: " + fileName, Snackbar.LENGTH_SHORT).show();
+		} catch (IllegalArgumentException e) {
+			Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
 		} catch (IOException e) {
-			Log.e("SaveFileError", "Error saving file: " + e.getMessage());
-			Snackbar.make(view, "Error saving file: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+			Log.e(TAG, "Error saving file", e);
+			Snackbar.make(view, "Error saving file: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
+	/**
+	 * Saves the current file with a new name.
+	 */
 	private void saveFileAs(View view) {
 		String fileName = binding.editTextFileName.getText().toString().trim();
 		String fileContent = binding.editTextFileContent.getText().toString();
 
-		if (fileName.isEmpty()) {
-			Snackbar.make(view, "Please enter a file name to save as", Snackbar.LENGTH_SHORT).show();
+		if (!validateFileOperation(fileName, fileContent, view)) {
 			return;
 		}
 
-		if (INVALID_FILENAME_CHARS.matcher(fileName).find()) {
-			Snackbar.make(view, "Invalid filename characters.", Snackbar.LENGTH_LONG).show();
-			return;
-		}
-
-		if (fileContent.isEmpty()) {
-			Snackbar.make(view, "File content is empty, cannot save.", Snackbar.LENGTH_SHORT).show();
-			return;
-		}
-
-		File directory = getExternalFilesDir(null);
-		File file = new File(directory, fileName);
-
-		try (FileWriter writer = new FileWriter(file)) {
-			writer.write(fileContent);
+		try {
+			FileManager.saveFile(fileName, fileContent, this);
 			Snackbar.make(view, "File saved as new file: " + fileName, Snackbar.LENGTH_SHORT).show();
+		} catch (IllegalArgumentException e) {
+			Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
 		} catch (IOException e) {
-			Log.e("SaveFileAsError", "Error saving file as: " + e.getMessage());
-			Snackbar.make(view, "Error saving file as: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+			Log.e(TAG, "Error saving file as", e);
+			Snackbar.make(view, "Error saving file as: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
+	/**
+	 * Validates file operation parameters.
+	 */
+	private boolean validateFileOperation(String fileName, String fileContent, View view) {
+		if (fileName.isEmpty()) {
+			Snackbar.make(view, "Please enter a file name", Snackbar.LENGTH_SHORT).show();
+			return false;
+		}
+
+		if (fileContent.isEmpty()) {
+			Snackbar.make(view, "File content is empty, nothing to save.", Snackbar.LENGTH_SHORT).show();
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Clears all input fields.
+	 */
 	private void clearFields() {
 		binding.editTextFileName.setText("");
 		binding.editTextFileContent.setText("");
 	}
 
+	/**
+	 * Shows the file selection dialog.
+	 */
 	private void showFileDialog(View view) {
-		File directory = getExternalFilesDir(null);
-		assert directory != null;
-		File[] files = directory.listFiles();
-		if (files == null || files.length == 0) {
-			Snackbar.make(view, "No files saved yet.", Snackbar.LENGTH_SHORT).show();
-			return;
-		}
-
-		List<String> fileNames = new ArrayList<>();
-		for (File file : files) {
-			if (file.isFile()) {
-				fileNames.add(file.getName());
-			}
-		}
-
+		List<String> fileNames = FileManager.getListOfFiles(this);
 		if (fileNames.isEmpty()) {
 			Snackbar.make(view, "No files saved yet.", Snackbar.LENGTH_SHORT).show();
 			return;
@@ -217,64 +208,75 @@ public class MainActivity extends AppCompatActivity {
 		builder.create().show();
 	}
 
+	/**
+	 * Opens a selected file.
+	 */
 	private void openFile(String fileName, View view) {
 		if (fileName == null || fileName.isEmpty()) {
 			Snackbar.make(view, "Please select a file to open", Snackbar.LENGTH_SHORT).show();
 			return;
 		}
 
-		File directory = getExternalFilesDir(null);
-		File file = new File(directory, fileName);
-
-		if (!file.exists()) {
-			Snackbar.make(view, "File not found: " + fileName, Snackbar.LENGTH_SHORT).show();
-			return;
-		}
-
-		StringBuilder text = new StringBuilder();
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				text.append(line);
-				text.append('\n');
-			}
-			binding.editTextFileContent.setText(text.toString());
+		try {
+			String content = FileManager.openFile(fileName, this);
+			binding.editTextFileContent.setText(content);
 			Snackbar.make(view, "File opened: " + fileName, Snackbar.LENGTH_SHORT).show();
-
 		} catch (IOException e) {
-			Log.e("OpenFileError", "Error opening file: " + e.getMessage());
-			Snackbar.make(view, "Error opening file: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+			Log.e(TAG, "Error opening file", e);
+			Snackbar.make(view, "Error opening file: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
+	/**
+	 * Creates a new file.
+	 */
 	private void newFile() {
 		clearFields();
 		binding.editTextFileName.setText(R.string.new_file_txt);
 		binding.editTextFileContent.requestFocus();
 	}
 
+	/**
+	 * Copies content to clipboard.
+	 */
 	private void copyToClipboard(View view) {
-		ClipboardManagerHelper.copyToClipboard(binding.editTextFileContent.getText().toString(), this);
+		try {
+			String content = binding.editTextFileContent.getText().toString();
+			if (!content.isEmpty()) {
+				ClipboardManagerHelper.copyToClipboard(content, this);
+				Snackbar.make(view, "Content copied to clipboard", Snackbar.LENGTH_SHORT).show();
+			} else {
+				Snackbar.make(view, "Nothing to copy (File content is empty)", Snackbar.LENGTH_SHORT).show();
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Error copying to clipboard", e);
+			Snackbar.make(view, "Error copying to clipboard", Snackbar.LENGTH_SHORT).show();
+		}
 	}
 
+	/**
+	 * Pastes content from clipboard.
+	 */
 	private void pasteFromClipboard(View view) {
-		ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-		ClipData clipData = clipboard.getPrimaryClip();
-		if (clipData != null && clipData.getItemCount() > 0) {
-			CharSequence text = clipData.getItemAt(0).getText();
+		try {
+			String text = ClipboardManagerHelper.pasteFromClipboard(this);
 			if (text != null) {
 				int currentCursorPos = binding.editTextFileContent.getSelectionStart();
 				binding.editTextFileContent.getText().insert(currentCursorPos, text);
 				binding.editTextFileContent.setSelection(currentCursorPos + text.length());
 				Snackbar.make(view, "Content pasted from clipboard", Snackbar.LENGTH_SHORT).show();
 			} else {
-				Snackbar.make(view, "No text content found in clipboard", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(view, "Clipboard is empty", Snackbar.LENGTH_SHORT).show();
 			}
-		} else {
-			Snackbar.make(view, "Clipboard is empty", Snackbar.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			Log.e(TAG, "Error pasting from clipboard", e);
+			Snackbar.make(view, "Error pasting from clipboard", Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
+	/**
+	 * Updates the word and character count display.
+	 */
 	private void updateWordCount() {
 		String text = binding.editTextFileContent.getText().toString().trim();
 		int wordCount = 0;
@@ -286,5 +288,56 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		binding.textViewWordCount.setText(String.format(Locale.ENGLISH, "Words: %d, Chars: %d", wordCount, charCount));
+	}
+
+	/**
+	 * Toggles the floating window service.
+	 */
+	private void toggleFloatingService() {
+		if (!isServiceRunning) {
+			if (Settings.canDrawOverlays(this)) {
+				startFloatingService();
+			} else {
+				requestOverlayPermission();
+			}
+		} else {
+			stopFloatingService();
+		}
+	}
+
+	/**
+	 * Requests overlay permission from the user.
+	 */
+	private void requestOverlayPermission() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.overlay_permission_request_message);
+		builder.setPositiveButton("OK", (dialog, which) -> {
+			Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+					Uri.parse("package:" + getPackageName()));
+			activityResultLauncher.launch(intent);
+		});
+		builder.setNegativeButton("Cancel", null);
+		builder.show();
+	}
+
+	/**
+	 * Starts the floating window service.
+	 */
+	private void startFloatingService() {
+		Intent intent = new Intent(this, FloatingWindowService.class);
+		startService(intent);
+		isServiceRunning = true;
+		binding.buttonToggleFloat.setText(R.string.stop_floating);
+		Snackbar.make(binding.getRoot(), R.string.start_floating_window, Snackbar.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * Stops the floating window service.
+	 */
+	private void stopFloatingService() {
+		Intent intent = new Intent(this, FloatingWindowService.class);
+		stopService(intent);
+		isServiceRunning = false;
+		binding.buttonToggleFloat.setText(R.string.start_floating);
 	}
 }
