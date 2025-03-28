@@ -21,6 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.sk.fcp.databinding.ActivityMainBinding;
 import com.sk.fcp.databinding.FloatingWindowLayoutBinding;
+import com.sk.fcp.impl.ClipboardOperationsImpl;
+import com.sk.fcp.impl.FileOperationsImpl;
+import com.sk.fcp.impl.FloatingWindowManagerImpl;
+import com.sk.fcp.interfaces.ClipboardOperations;
+import com.sk.fcp.interfaces.FileOperations;
+import com.sk.fcp.interfaces.FloatingWindowManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +49,16 @@ public class MainActivity extends AppCompatActivity {
 	ActivityResultLauncher<Intent> activityResultLauncher;
 	private FloatingWindowLayoutBinding binding;
 	ActivityMainBinding mainBinding;
+	private final FileOperations fileOperations;
+	private final ClipboardOperations clipboardOperations;
+	private final FloatingWindowManager floatingWindowManager;
 	private boolean isServiceRunning = false;
+
+	public MainActivity() {
+		this.fileOperations = new FileOperationsImpl(this);
+		this.clipboardOperations = new ClipboardOperationsImpl(this);
+		this.floatingWindowManager = new FloatingWindowManagerImpl(this);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		try {
-			FileManager.saveFile(fileName, fileContent, this);
+			fileOperations.saveFile(fileName, fileContent);
 			Snackbar.make(view, "File saved as: " + fileName, Snackbar.LENGTH_SHORT).show();
 		} catch (IllegalArgumentException e) {
 			Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -151,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		try {
-			FileManager.saveFile(fileName, fileContent, this);
+			fileOperations.saveFileAs(fileName, fileContent);
 			Snackbar.make(view, "File saved as new file: " + fileName, Snackbar.LENGTH_SHORT).show();
 		} catch (IllegalArgumentException e) {
 			Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -190,17 +205,16 @@ public class MainActivity extends AppCompatActivity {
 	 * Shows the file selection dialog.
 	 */
 	private void showFileDialog(View view) {
-		List<String> fileNames = FileManager.getListOfFiles(this);
-		if (fileNames.isEmpty()) {
+		String[] fileNames = fileOperations.getListOfFiles();
+		if (fileNames.length == 0) {
 			Snackbar.make(view, "No files saved yet.", Snackbar.LENGTH_SHORT).show();
 			return;
 		}
 
-		CharSequence[] fileList = fileNames.toArray(new CharSequence[0]);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Open File");
-		builder.setItems(fileList, (dialog, which) -> {
-			String selectedFileName = fileNames.get(which);
+		builder.setItems(fileNames, (dialog, which) -> {
+			String selectedFileName = fileNames[which];
 			binding.editTextFileName.setText(selectedFileName);
 			openFile(selectedFileName, view);
 		});
@@ -218,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		try {
-			String content = FileManager.openFile(fileName, this);
+			String content = fileOperations.openFile(fileName);
 			binding.editTextFileContent.setText(content);
 			Snackbar.make(view, "File opened: " + fileName, Snackbar.LENGTH_SHORT).show();
 		} catch (IOException e) {
@@ -243,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 		try {
 			String content = binding.editTextFileContent.getText().toString();
 			if (!content.isEmpty()) {
-				ClipboardManagerHelper.copyToClipboard(content, this);
+				clipboardOperations.copyToClipboard(content);
 				Snackbar.make(view, "Content copied to clipboard", Snackbar.LENGTH_SHORT).show();
 			} else {
 				Snackbar.make(view, "Nothing to copy (File content is empty)", Snackbar.LENGTH_SHORT).show();
@@ -259,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 	 */
 	private void pasteFromClipboard(View view) {
 		try {
-			String text = ClipboardManagerHelper.pasteFromClipboard(this);
+			String text = clipboardOperations.pasteFromClipboard();
 			if (text != null) {
 				int currentCursorPos = binding.editTextFileContent.getSelectionStart();
 				binding.editTextFileContent.getText().insert(currentCursorPos, text);
@@ -294,30 +308,18 @@ public class MainActivity extends AppCompatActivity {
 	 * Toggles the floating window service.
 	 */
 	private void toggleFloatingService() {
-		if (!isServiceRunning) {
-			if (Settings.canDrawOverlays(this)) {
+		if (!floatingWindowManager.isServiceRunning()) {
+			if (floatingWindowManager.hasOverlayPermission()) {
 				startFloatingService();
+				binding.buttonToggleFloat.setText(R.string.stop_floating);
+				Snackbar.make(binding.getRoot(), R.string.start_floating_window, Snackbar.LENGTH_SHORT).show();
 			} else {
-				requestOverlayPermission();
+				floatingWindowManager.requestOverlayPermission();
 			}
 		} else {
-			stopFloatingService();
+			floatingWindowManager.stopFloatingService();
+			binding.buttonToggleFloat.setText(R.string.start_floating);
 		}
-	}
-
-	/**
-	 * Requests overlay permission from the user.
-	 */
-	private void requestOverlayPermission() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.overlay_permission_request_message);
-		builder.setPositiveButton("OK", (dialog, which) -> {
-			Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-					Uri.parse("package:" + getPackageName()));
-			activityResultLauncher.launch(intent);
-		});
-		builder.setNegativeButton("Cancel", null);
-		builder.show();
 	}
 
 	/**
